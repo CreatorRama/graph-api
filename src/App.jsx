@@ -26,7 +26,7 @@ const App = () => {
     // Initialize the Facebook SDK
     window.fbAsyncInit = function() {
       FB.init({
-        appId: 'APP_ID',
+        appId: '966499438600477',
         cookie: true,
         xfbml: true,
         version: 'v10.0'
@@ -169,14 +169,25 @@ const App = () => {
   };
 
   const handleLogin = () => {
-    FB.login(function(response) {
-      if (response.authResponse) {
-        checkLoginState();
-      } else {
-        console.log('User cancelled login or did not fully authorize.');
-      }
-    }, { scope: 'public_profile,email,pages_read_engagement,pages_show_list', auth_type: 'reauthorize' });
+    if (typeof FB !== 'undefined') {
+      FB.getLoginStatus(function(response) {
+        if (response.status === 'connected') {
+          checkLoginState();
+        } else {
+          FB.login(function(response) {
+            if (response.authResponse) {
+              checkLoginState();
+            } else {
+              console.log('User cancelled login or did not fully authorize.');
+            }
+          }, { scope: 'public_profile,email,pages_read_engagement,pages_show_list', auth_type: 'reauthorize' });
+        }
+      });
+    } else {
+      console.log('Facebook SDK is not initialized yet.');
+    }
   };
+  
 
   const handleLogout = () => {
     FB.logout(function(response) {
